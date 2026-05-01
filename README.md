@@ -12,7 +12,6 @@ The Order Service manages customer orders. It calls the Catalog Service over HTT
 ## Run Locally
 
 ```powershell
-cd D:\Mtech\Sem3\Scalable\Assignment\order-service
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -23,7 +22,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8002
 ## Run Tests
 
 ```powershell
-cd D:\Mtech\Sem3\Scalable\Assignment\order-service
 pytest
 ```
 
@@ -45,6 +43,70 @@ pre-commit run --all-files
 | POST | `/orders` | Create order |
 | GET | `/orders` | List orders |
 | GET | `/orders/{order_id}` | Get order |
+
+## Testing the API
+
+### Prerequisites
+
+Ensure the Catalog Service is running on `http://localhost:8001` before creating orders.
+
+### Health Check
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod http://localhost:8002/health
+```
+
+**Bash/Git Bash:**
+
+```bash
+curl http://localhost:8002/health
+```
+
+### Create an Order
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8002/orders -ContentType "application/json" -Body '{"customer_name":"Aditi","items":[{"product_id":1,"quantity":2}]}'
+```
+
+**Bash/Git Bash:**
+
+```bash
+curl -X POST http://localhost:8002/orders \
+  -H "Content-Type: application/json" \
+  -d '{"customer_name":"Aditi","items":[{"product_id":1,"quantity":2}]}'
+```
+
+### List Orders
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod http://localhost:8002/orders
+```
+
+**Bash/Git Bash:**
+
+```bash
+curl http://localhost:8002/orders
+```
+
+### Get Order Details
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod http://localhost:8002/orders/1
+```
+
+**Bash/Git Bash:**
+
+```bash
+curl http://localhost:8002/orders/1
+```
 
 ## Docker
 
@@ -83,6 +145,21 @@ Access the service:
 ```powershell
 minikube service order-service -n store-app
 ```
+### Kubernetes Dashboard
+
+Enable and open the dashboard:
+
+```powershell
+minikube dashboard
+```
+
+In the dashboard:
+
+- Select the namespace `store-app` then check the resources:
+  - Deployments: `catalog-service`
+  - Pods: running status and restart count
+  - Services: NodePort service exposure
+  - Logs: request handling and any service communication errors
 
 ## GitHub Actions
 
